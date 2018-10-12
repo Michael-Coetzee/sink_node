@@ -37,3 +37,8 @@ health_check_request = {
     'New Journal Count': 'VAR',
     'Protocol Dependent Trailer': 'OFT'
 }
+
+def prepare_dict(dict_n, config):
+    dict_n['request'] = config
+    global data_string
+    data_string = json.dumps(dict_n)
