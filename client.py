@@ -26,22 +26,23 @@ health_check_request = {
     'Bank_ID_Number': 'BANK001',
     'Terminal_ID': 'TERM001',
     'Response_Type': 'H0',
-    'ATM Date': '---',
-    'ATM Time': '---',
-    'Bill Count 1': '---',
-    'Bill Count 2': '---',
-    'Bill Count 3': '---',
-    'Bill Count 4': '---',
-    'Mode Type': '---' ,
-    'Error Code': 'VAR',
-    'New Journal Count': 'VAR',
-    'Protocol Dependent Trailer': 'OFT'
+    'ATM_Date': '---',
+    'ATM_Time': '---',
+    'Bill_Count_1': '---',
+    'Bill_Count_2': '---',
+    'Bill_Count_3': '---',
+    'Bill_Count_4': '---',
+    'Mode_Type': '---',
+    'Error_Code': 'VAR',
+    'New_Journal_Count': 'VAR',
+    'Protocol_Dependent_Trailer': 'OFT'
 }
 
 def prepare_dict(dict_n, config):
     dict_n['request'] = config
     global data_string
     data_string = json.dumps(dict_n)
+
 
 def create_socket(data_string):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,10 +56,10 @@ def create_socket(data_string):
 def main(args):
     if len(args) == 1:
         if sys.argv[1] == 'health':
-            prepare_dict(health_check_request, config_request)
+            prepare_dict(health_check_request, health_check)
             create_socket(data_string)
         elif sys.argv[1] == 'config':
-            prepare_dict(config_request_dict, health_check)
+            prepare_dict(config_request_dict, config_request)
             create_socket(data_string)
         else:
             print 'Usage: python %s <config> | <health>' % sys.argv[0]

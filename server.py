@@ -13,11 +13,12 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
+
 config_response = 'STXH0.BANK001:1CTERM001:1C------:1C...:1C---:1C---:1C---:1C---:1C---:1C------:1C------OFT'
 health_confirm = 'STXH0.BANK001:1CTERM001:1CH0OFT'
 
 config_response_dict = {
-    'Protocol_Dependent_Header': 'VAR',
+    'Protocol_Dependent_Header': 'STX',
     'Record_Format': 'H',
     'Application_Type': '0',
     'Message_Delimiter': '.',
@@ -36,7 +37,7 @@ config_response_dict = {
     'AID_List': '---',
     'CA_Public_Key_Information': '---',
     'CA_Public_Key_List': '---',
-    'Protocol_Dependent_Trailer': 'VAR',
+    'Protocol_Dependent_Trailer': 'OFT',
 }
 
 health_check_confirm_dict = {
@@ -52,13 +53,13 @@ health_check_confirm_dict = {
 
 def create_store_response(table_name, adict):
     columns = ' varchar(255), '.join(adict.keys()) + ' varchar(255)'
-    mycursor.execute("CREATE TABLE IF NOT EXISTS %s \
-    (id INT AUTO_INCREMENT PRIMARY KEY, `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, %s )" % (table_name, columns))
+    mycursor.execute("CREATE TABLE IF NOT EXISTS %s (id INT AUTO_INCREMENT PRIMARY KEY, `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, %s )" % (table_name, columns))
     plachold = ', '.join(['%s'] * len(adict))
     columns = ', '.join(adict.keys())
     sql = "INSERT INTO %s (%s) VALUES (%s)" % (table_name, columns, plachold)
     mycursor.execute(sql, adict.values())
     mydb.commit()
+
 
 def create_socket():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -85,6 +86,7 @@ def create_socket():
         else:
             print 'nope'
             c.close()
+
 
 if __name__ == '__main__':
     create_socket()
