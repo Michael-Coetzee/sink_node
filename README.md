@@ -45,4 +45,4 @@ session id: S'cb18d7f0b5419945ef7905b574fb90c71f243c4f4a63ad5b'
 reply recieved from server ['STXH0.BANK001', 'TERM001', 'H0OFT']
 ```
 ## Closing Off
-I hope this answers the test question, albeit a very rudimentary version 
+I hope this answers the test question, albeit a rather rudimentary version 
