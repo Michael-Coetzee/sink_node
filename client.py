@@ -51,3 +51,20 @@ def create_socket(data_string):
     data = s.recv(1024).split(':1C')
     print 'reply recieved from server %s' % data
     s.close()
+
+def main(args):
+    if len(args) == 1:
+        if sys.argv[1] == 'health':
+            prepare_dict(health_check_request, config_request)
+            create_socket(data_string)
+        elif sys.argv[1] == 'config':
+            prepare_dict(config_request_dict, health_check)
+            create_socket(data_string)
+        else:
+            print 'Usage: python %s <config> | <health>' % sys.argv[0]
+    else:
+        print 'Usage: python %s <config> | <health>' % sys.argv[0]
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
