@@ -12,6 +12,7 @@ mydb = mysql.connector.connect(
     passwd="password",
     db="testdb"
 )
+
 mycursor = mydb.cursor()
 
 
@@ -62,6 +63,17 @@ def create_store_response(table_name, adict):
     mydb.commit()
 
 
+def data_and_time(table_name):
+    mycursor.execute("SELECT date from %s" % table_name)
+    row = mycursor.fetchone()
+    date = str(row[0]).split(' ')[0]
+    time = str(row[0]).split(' ')[1]
+    new_dict = {
+    'ATM_Date': date,
+    'ATM_Time': time,
+    }
+
+
 def create_socket():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -73,14 +85,15 @@ def create_socket():
         print 'Got connection from', addr
         data = c.recv(2048)
         data_loaded = json.loads(data)
-        data_session_key = data_loaded.pop('session_key', None)
+        data_session_key = data_loaded.get('session_key', None)
         key = cPickle.loads(str(data_session_key))
-        data_clean = data_loaded.pop('request', None).split(':1C')
+        data_clean = data_loaded.get('request', None).split(':1C')
         if data_clean[2] == 'H0':
             print 'received health request'
             print 'session id: %s' % key
-            c.send(health_confirm)
             create_store_response('health_check', data_loaded)
+            data_and_time('health_check')
+            c.send(health_confirm)
             c.close()
         elif data_clean[2] == '88':
             print 'received config request'
