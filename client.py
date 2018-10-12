@@ -42,3 +42,12 @@ def prepare_dict(dict_n, config):
     dict_n['request'] = config
     global data_string
     data_string = json.dumps(dict_n)
+
+def create_socket(data_string):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.connect(('localhost', 12345))
+    s.sendall(data_string)
+    data = s.recv(1024).split(':1C')
+    print 'reply recieved from server %s' % data
+    s.close()
