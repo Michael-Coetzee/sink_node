@@ -1,6 +1,8 @@
+import os
 import sys
 import json
 import socket
+import cPickle
 
 config_request = 'STXH0.BANK001:1CTERM001:1C88:1C3OFT'
 health_check  =  'STXH0.BANK001:1CTERM001:1CH0:1C------:1C---:1C---:1C---:1C---:1C---:1C...:1C---OFT'
@@ -38,7 +40,11 @@ health_check_request = {
     'Protocol_Dependent_Trailer': 'OFT'
 }
 
+
 def prepare_dict(dict_n, config):
+    generate_session_key = cPickle.dumps(os.urandom(24).encode('hex'))
+    dict_n['session_key'] = generate_session_key
+    print 'session id: %s' % generate_session_key
     dict_n['request'] = config
     global data_string
     data_string = json.dumps(dict_n)

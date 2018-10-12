@@ -1,5 +1,6 @@
 import json
 import socket
+import cPickle
 import datetime
 import mysql.connector
 
@@ -72,20 +73,25 @@ def create_socket():
         print 'Got connection from', addr
         data = c.recv(2048)
         data_loaded = json.loads(data)
+        data_session_key = data_loaded.pop('session_key', None)
+        key = cPickle.loads(str(data_session_key))
         data_clean = data_loaded.pop('request', None).split(':1C')
         if data_clean[2] == 'H0':
             print 'received health request'
+            print 'session id: %s' % key
             c.send(health_confirm)
             create_store_response('health_check', data_loaded)
             c.close()
         elif data_clean[2] == '88':
             print 'received config request'
+            print 'session id: %s' % key
             c.send(config_response)
             create_store_response('config_check', data_loaded)
             c.close()
         else:
             print 'nope'
             c.close()
+
 
 
 if __name__ == '__main__':
