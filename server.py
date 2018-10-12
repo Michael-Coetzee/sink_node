@@ -49,3 +49,13 @@ health_check_confirm_dict = {
     'Response Type': 'H0',
     'Protocol_Dependent_Trailer': 'OFT'
 }
+
+def create_store_response(table_name, adict):
+    columns = ' varchar(255), '.join(adict.keys()) + ' varchar(255)'
+    mycursor.execute("CREATE TABLE IF NOT EXISTS %s \
+    (id INT AUTO_INCREMENT PRIMARY KEY, `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, %s )" % (table_name, columns))
+    plachold = ', '.join(['%s'] * len(adict))
+    columns = ', '.join(adict.keys())
+    sql = "INSERT INTO %s (%s) VALUES (%s)" % (table_name, columns, plachold)
+    mycursor.execute(sql, adict.values())
+    mydb.commit()
