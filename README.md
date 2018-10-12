@@ -10,6 +10,7 @@ Each session has a key created and shared to the server, keys are also logged
 2. Add database on client side to log responses
 3. Improve key management
 4. introduce threading for multiple clients(ATM's)
+5. code refactoring
 
 ## Requirements
 1. I did this on a linux rig, however is should work on all OS's(testing needed) - distro used Arch Linux
