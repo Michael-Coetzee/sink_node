@@ -56,7 +56,7 @@ def create_socket(data_string):
     s.connect(('localhost', 12345))
     s.sendall(data_string)
     data = s.recv(1024).split(':1C')
-    print 'reply recieved from server %s' % data
+    print 'reply recieved response from server %s' % data
     s.close()
 
 def main(args):
