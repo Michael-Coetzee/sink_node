@@ -3,6 +3,16 @@ import socket
 import datetime
 import mysql.connector
 
+date = datetime.datetime.date(datetime.datetime.now())
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="michael",
+    passwd="password",
+    db="testdb"
+)
+mycursor = mydb.cursor()
+
 config_response = 'STXH0.BANK001:1CTERM001:1C------:1C...:1C---:1C---:1C---:1C---:1C---:1C------:1C------OFT'
 health_confirm = 'STXH0.BANK001:1CTERM001:1CH0OFT'
 
