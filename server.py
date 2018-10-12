@@ -59,3 +59,29 @@ def create_store_response(table_name, adict):
     sql = "INSERT INTO %s (%s) VALUES (%s)" % (table_name, columns, plachold)
     mycursor.execute(sql, adict.values())
     mydb.commit()
+
+def create_socket():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.bind(('0.0.0.0', 12345))
+
+    s.listen(5)
+    while True:
+        c, addr = s.accept()
+        print 'Got connection from', addr
+        data = c.recv(2048)
+        data_loaded = json.loads(data)
+        data_clean = data_loaded.pop('request', None).split(':1C')
+        if data_clean[2] == 'H0':
+            print 'received health request'
+            c.send(health_confirm)
+            create_store_response('health_check', data_loaded)
+            c.close()
+        elif data_clean[2] == '88':
+            print 'received config request'
+            c.send(config_response)
+            create_store_response('config_check', data_loaded)
+            c.close()
+        else:
+            print 'nope'
+            c.close()
