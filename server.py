@@ -85,3 +85,6 @@ def create_socket():
         else:
             print 'nope'
             c.close()
+
+if __name__ == '__main__':
+    create_socket()
