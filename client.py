@@ -3,42 +3,59 @@ import sys
 import json
 import socket
 import cPickle
+from collections import OrderedDict
 
-config_request = 'STXH0.BANK001:1CTERM001:1C88:1C3OFT'
-health_check  =  'STXH0.BANK001:1CTERM001:1CH0:1C------:1C---:1C---:1C---:1C---:1C---:1C...:1C---OFT'
+crt = [
+    ('Protocol_Dependent_Header', 'STX'),
+    ('Record_Format', 'H'),
+    ('Application_Type', '0'),
+    ('Message_Delimiter', '.'),
+    ('Bank_ID_Number', 'BANK001'),
+    ('Field_Separator_1', ':1C'),
+    ('Terminal_ID', 'TERM001'),
+    ('Field_Separator_2', ':1C'),
+    ('Request_Type', '88'),
+    ('Field_Separator_3', ':1C'),
+    ('Unknown_Value_Field', '3'),
+    ('Protocol_Dependent_Trailer', 'OFT')
+]
 
-config_request_dict = {
-    'Protocol_Dependent_Header': 'STX',
-    'Record_Format': 'H',
-    'Application_Type': '0',
-    'Message_Delimiter': '.',
-    'Bank_ID_Number': 'BANK001',
-    'Terminal_ID': 'TERM001',
-    'Request_Type': '88',
-    'Unknown_Value_Field': '3',
-    'Protocol_Dependent_Trailer': 'OFT'
-}
 
+hcrt = [
+    ('Protocol_Dependent_Header', 'STX'),
+    ('Record_Format', 'H'),
+    ('Application_Type', '0'),
+    ('Message_Delimiter', '.'),
+    ('Bank_ID_Number', 'BANK001'),
+    ('Field_Separator_1', ':1C'),
+    ('Terminal_ID', 'TERM001'),
+    ('Field_Separator_2', ':1C'),
+    ('Response_Type', 'H0'),
+    ('Field_Separator_3', ':1C'),
+    ('ATM_Date', '---'),
+    ('ATM_Time', '---'),
+    ('Field_Separator_4', ':1C'),
+    ('Bill_Count_1', '---'),
+    ('Field_Separator_5', ':1C'),
+    ('Bill_Count_2', '---'),
+    ('Field_Separator_6', ':1C'),
+    ('Bill_Count_3', '---'),
+    ('Field_Separator_7', ':1C'),
+    ('Bill_Count_4', '---'),
+    ('Field_Separator_8', ':1C'),
+    ('Mode_Type', '---'),
+    ('Field_Separator_9', ':1C'),
+    ('Error_Code', '---'),
+    ('Field_Separator_10', ':1C'),
+    ('New_Journal_Count', '---'),
+    ('Protocol_Dependent_Trailer', 'OFT')
+]
 
-health_check_request = {
-    'Protocol_Dependent_Header': 'STX',
-    'Record_Format': 'H',
-    'Application_Type': '0',
-    'Message_Delimiter': '.',
-    'Bank_ID_Number': 'BANK001',
-    'Terminal_ID': 'TERM001',
-    'Response_Type': 'H0',
-    'ATM_Date': '---',
-    'ATM_Time': '---',
-    'Bill_Count_1': '---',
-    'Bill_Count_2': '---',
-    'Bill_Count_3': '---',
-    'Bill_Count_4': '---',
-    'Mode_Type': '---',
-    'Error_Code': 'VAR',
-    'New_Journal_Count': 'VAR',
-    'Protocol_Dependent_Trailer': 'OFT'
-}
+crt = OrderedDict(crt)
+hcrt = OrderedDict(hcrt)
+
+config_request = ''.join(str(x) for x in crt.values())
+health_check = ''.join(str(x) for x in hcrt.values())
 
 
 def prepare_session(dict_n, config):
@@ -70,10 +87,10 @@ def create_socket(data_string):
 def main(args):
     if len(args) == 1:
         if sys.argv[1] == 'health':
-            prepare_session(health_check_request, health_check)
+            prepare_session(hcrt, health_check)
             create_socket(data_string)
         elif sys.argv[1] == 'config':
-            prepare_session(config_request_dict, config_request)
+            prepare_session(crt, config_request)
             create_socket(data_string)
         else:
             print 'Usage: python %s <config> | <health>' % sys.argv[0]

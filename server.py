@@ -3,8 +3,10 @@ import socket
 import cPickle
 import datetime
 import mysql.connector
+from collections import OrderedDict
 
 date = datetime.datetime.date(datetime.datetime.now())
+time = datetime.datetime.time(datetime.datetime.now())
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -14,43 +16,59 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
+ct = [
+    ('Protocol_Dependent_Header', 'STX'),
+    ('Record_Format', 'H'),
+    ('Application_Type', '0'),
+    ('Message_Delimiter', '.'),
+    ('Bank_ID_Number', 'BANK001'),
+    ('Field_Separator_1', ':1C'),
+    ('Terminal_ID', 'TERM001'),
+    ('Field_Separator_2', ':1C'),
+    ('Response_Type', '88'),
+    ('Field_Separator_3', ':1C'),
+    ('Local_Date', str(date)),
+    ('Local_Time', str(time)[:8]),
+    ('Field_Separator_4', ':1C'),
+    ('Health_Message_Timer_Value', '...'),
+    ('Field_Separator_5', ':1C'),
+    ('TDES_Working_Key_Part_1', '---'),
+    ('Field_Separator_6', ':1C'),
+    ('Surcharge_Amount', '---'),
+    ('Field_Separator_7', ':1C'),
+    ('BIN_List_Enable_Flag', '---'),
+    ('Field_Separator_8', ':1C'),
+    ('TDES_Working_Key_Part_2', '---'),
+    ('Field_Separator_9', ':1C'),
+    ('TDES_Working_Key_Part_1', '---'),
+    ('Field_Separator_10', ':1C'),
+    ('AID_Information', '---'),
+    ('AID_List', '---'),
+    ('Field_Separator_11', ':1C'),
+    ('CA_Public_Key_Information', '---'),
+    ('CA_Public_Key_List', '---'),
+    ('Protocol_Dependent_Trailer', 'OFT'),
+]
 
-config_response = 'STXH0.BANK001:1CTERM001:1C88:1C------:1C...:1C---:1C---:1C---:1C---:1C---:1C------:1C------OFT'
-health_confirm = 'STXH0.BANK001:1CTERM001:1CH0OFT'
+hcct = [
+    ('Protocol_Dependent_Header', 'STX'),
+    ('Record_Format', 'H'),
+    ('Application_Type', '0'),
+    ('Message_Delimiter', '.'),
+    ('Bank_ID_Number', 'BANK001'),
+    ('Field_Separator_1', ':1C'),
+    ('Terminal_ID', 'TERM001'),
+    ('Field_Separator_2', ':1C'),
+    ('Response Type', 'H0'),
+    ('Protocol_Dependent_Trailer', 'OFT')
+]
 
-config_response_dict = {
-    'Protocol_Dependent_Header': 'STX',
-    'Record_Format': 'H',
-    'Application_Type': '0',
-    'Message_Delimiter': '.',
-    'Bank_ID_Number': '---',
-    'Terminal_ID': '---',
-    'Response_Type': '88',
-    'Local_Date': '---',
-    'Local_Time': '---',
-    'Health_Message_Timer_Value': '...',
-    'TDES_Working_Key_Part_1': '---',
-    'Surcharge_Amount': '---',
-    'BIN_List_Enable_Flag': '---',
-    'TDES_Working_Key_Part_2': '---',
-    'TDES_Working_Key_Part_1': '---',
-    'AID_Information': '---',
-    'AID_List': '---',
-    'CA_Public_Key_Information': '---',
-    'CA_Public_Key_List': '---',
-    'Protocol_Dependent_Trailer': 'OFT',
-}
+ct = OrderedDict(ct)
+hcct = OrderedDict(hcct)
 
-health_check_confirm_dict = {
-    'Protocol_Dependent_Header': 'STX',
-    'Record_Format': 'H',
-    'Application_Type': '0',
-    'Message_Delimiter': '.',
-    'Bank_ID_Number': 'BANK001',
-    'Terminal_ID': 'TERM001',
-    'Response Type': 'H0',
-    'Protocol_Dependent_Trailer': 'OFT'
-}
+config_response = ''.join(str(x) for x in ct.values())
+health_confirm = ''.join(str(x) for x in hcct.values())
+
 
 def create_store_response(table_name, adict):
     columns = ' varchar(255), '.join(adict.keys()) + ' varchar(255)'
