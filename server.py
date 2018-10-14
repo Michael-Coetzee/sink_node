@@ -6,9 +6,6 @@ import datetime
 import mysql.connector
 from collections import OrderedDict
 
-date = datetime.datetime.date(datetime.datetime.now())
-time = datetime.datetime.time(datetime.datetime.now())
-
 mydb = mysql.connector.connect(
     host="localhost",
     user="michael",
@@ -17,63 +14,64 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
-ct = [
-    ('Protocol_Dependent_Header', 'STX'),
-    ('Record_Format', 'H'),
-    ('Application_Type', '0'),
-    ('Message_Delimiter', '.'),
-    ('Bank_ID_Number', 'BANK001'),
-    ('Field_Separator_1', ':1C'),
-    ('Terminal_ID', 'TERM001'),
-    ('Field_Separator_2', ':1C'),
-    ('Response_Type', '88'),
-    ('Field_Separator_3', ':1C'),
-    ('Local_Date', str(date)),
-    ('Local_Time', str(time)[:8]),
-    ('Field_Separator_4', ':1C'),
-    ('Health_Message_Timer_Value', '...'),
-    ('Field_Separator_5', ':1C'),
-    ('TDES_Working_Key_Part_1', '---'),
-    ('Field_Separator_6', ':1C'),
-    ('Surcharge_Amount', '---'),
-    ('Field_Separator_7', ':1C'),
-    ('BIN_List_Enable_Flag', '---'),
-    ('Field_Separator_8', ':1C'),
-    ('TDES_Working_Key_Part_2', '---'),
-    ('Field_Separator_9', ':1C'),
-    ('TDES_Working_Key_Part_1', '---'),
-    ('Field_Separator_10', ':1C'),
-    ('AID_Information', '---'),
-    ('AID_List', '---'),
-    ('Field_Separator_11', ':1C'),
-    ('CA_Public_Key_Information', '---'),
-    ('CA_Public_Key_List', '---'),
-    ('Protocol_Dependent_Trailer', 'OFT')
-]
-
-hcct = [
-    ('Protocol_Dependent_Header', 'STX'),
-    ('Record_Format', 'H'),
-    ('Application_Type', '0'),
-    ('Message_Delimiter', '.'),
-    ('Bank_ID_Number', 'BANK001'),
-    ('Field_Separator_1', ':1C'),
-    ('Terminal_ID', 'TERM001'),
-    ('Field_Separator_2', ':1C'),
-    ('Response Type', 'H0'),
-    ('Protocol_Dependent_Trailer', 'OFT')
-]
-
-ct = OrderedDict(ct)
-hcct = OrderedDict(hcct)
-
-config_response = ''.join(str(x) for x in ct.values())
-health_confirm = ''.join(str(x) for x in hcct.values())
-
 terminal_id = ['TERM001', 'TERM002']
 
 
 def on_new_client(conn):
+    date = datetime.datetime.date(datetime.datetime.now())
+    time = datetime.datetime.time(datetime.datetime.now())
+    ct = [
+        ('Protocol_Dependent_Header', 'STX'),
+        ('Record_Format', 'H'),
+        ('Application_Type', '0'),
+        ('Message_Delimiter', '.'),
+        ('Bank_ID_Number', 'BANK001'),
+        ('Field_Separator_1', ':1C'),
+        ('Terminal_ID', 'TERM001'),
+        ('Field_Separator_2', ':1C'),
+        ('Response_Type', '88'),
+        ('Field_Separator_3', ':1C'),
+        ('Local_Date', str(date)),
+        ('Local_Time', str(time)[:8]),
+        ('Field_Separator_4', ':1C'),
+        ('Health_Message_Timer_Value', '...'),
+        ('Field_Separator_5', ':1C'),
+        ('TDES_Working_Key_Part_1', '---'),
+        ('Field_Separator_6', ':1C'),
+        ('Surcharge_Amount', '---'),
+        ('Field_Separator_7', ':1C'),
+        ('BIN_List_Enable_Flag', '---'),
+        ('Field_Separator_8', ':1C'),
+        ('TDES_Working_Key_Part_2', '---'),
+        ('Field_Separator_9', ':1C'),
+        ('TDES_Working_Key_Part_1', '---'),
+        ('Field_Separator_10', ':1C'),
+        ('AID_Information', '---'),
+        ('AID_List', '---'),
+        ('Field_Separator_11', ':1C'),
+        ('CA_Public_Key_Information', '---'),
+        ('CA_Public_Key_List', '---'),
+        ('Protocol_Dependent_Trailer', 'OFT')
+    ]
+
+    hcct = [
+        ('Protocol_Dependent_Header', 'STX'),
+        ('Record_Format', 'H'),
+        ('Application_Type', '0'),
+        ('Message_Delimiter', '.'),
+        ('Bank_ID_Number', 'BANK001'),
+        ('Field_Separator_1', ':1C'),
+        ('Terminal_ID', 'TERM001'),
+        ('Field_Separator_2', ':1C'),
+        ('Response Type', 'H0'),
+        ('Protocol_Dependent_Trailer', 'OFT')
+    ]
+
+    ct = OrderedDict(ct)
+    hcct = OrderedDict(hcct)
+
+    config_response = ''.join(str(x) for x in ct.values())
+    health_confirm = ''.join(str(x) for x in hcct.values())
     while True:
         data = conn.recv(2048)
         try:
