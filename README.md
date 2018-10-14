@@ -6,9 +6,9 @@ Each session has a key created and shared to the server, keys are also logged
 
 ## Future Improvements
 
-- [] Update time and date on config request from the server response
-- [] Add database on client side to log responses
-- [] Improve key management
+- [ ] Update time and date on config request from the server response
+- [ ] Add database on client side to log responses
+- [ ] Improve key management
 - [x] introduce threading for multiple clients(ATM's)
 - [x] code refactoring
 
