@@ -6,8 +6,8 @@ Each session has a key created and shared to the server, keys are also logged
 
 ## Future Improvements
 
-- [ ] Update time and date on config request from the server response
-- [ ] Add database on client side to log responses
+- [x] Update time and date on config request from the server response
+- [x] Add database on client side to log responses
 - [ ] Improve key management
 - [x] introduce threading for multiple clients(ATM's)
 - [x] code refactoring
@@ -38,27 +38,47 @@ $python2 client2.py <config> | <health>
 ```
 ➜  sink_node git:(master) ✗ python2 server.py
 Got connection from TERM001
+received config request
+session id: 94b2acf5e489750a0fed281f7d9d477434e29ca58de2176f
+Got connection from TERM001
+received config request
+session id: 6a72abce49da633b28b0f09a4b6c2658cbd81ce61f2f8b6c
+Got connection from TERM001
 received health request
-session id: 8069e94e697aad6d0925417f3f8cc8eaa115f82d2d24d005
-Got connection from TERM002
+session id: 136c8655751b9c71dc99a68ecf7d5578fec432f503c497ad
+Got connection from TERM001
 received health request
-session id: 2d75668827bf68a6622b7badc81ed7131e4cc4766885bbbb
+session id: dd28d248db38f52e8ef736e3eba59038ec992a45901ce4b3
 ```
 ## Visual Output client.py
 
 ```
+➜  sink_node git:(master) ✗ python2 client.py config
+Current ATM date: 2018-10-15 Current ATM time: 00:29:01
+session key: 94b2acf5e489750a0fed281f7d9d477434e29ca58de2176f
+recieved config response: "STXH0.BANK001:1CTERM001:1C88:1C2018-10-1500:31:06:1C...:1C---:1C---:1C---:1C---:1C:1C------:1C------OFT"
+updading atm configuration
+ATM_Date: 2018-10-15 ATM_Time: 00:31:06
 ➜  sink_node git:(master) ✗ python2 client.py health
-session key: 8069e94e697aad6d0925417f3f8cc8eaa115f82d2d24d005
+session key: dd28d248db38f52e8ef736e3eba59038ec992a45901ce4b3
 recieved health response: "STXH0.BANK001:1CTERM001:1CH0OFT"
+➜  sink_node git:(master) ✗ 
 ```
 
 ## Visual Output client2.py
 
 ```
-➜  sink_node git:(master) ✗ python2 client2.py health                                      
-session key: 2d75668827bf68a6622b7badc81ed7131e4cc4766885bbbb
+➜  sink_node git:(master) ✗ python2 client.py config                                        
+Current ATM date: 2018-10-15 Current ATM time: 00:31:06
+session key: 6a72abce49da633b28b0f09a4b6c2658cbd81ce61f2f8b6c
+recieved config response: "STXH0.BANK001:1CTERM001:1C88:1C2018-10-1500:31:13:1C...:1C---:1C---:1C---:1C---:1C:1C------:1C------OFT"
+updading atm configuration
+ATM_Date: 2018-10-15 ATM_Time: 00:31:13
+➜  sink_node git:(master) ✗ python2 client.py health
+session key: 136c8655751b9c71dc99a68ecf7d5578fec432f503c497ad
 recieved health response: "STXH0.BANK001:1CTERM001:1CH0OFT"
+➜  sink_node git:(master) ✗ 
 ```
 
 ## Closing Off
-I hope this answers the test question, albeit a rudimentary version 
+I hope this answers the test question, albeit a rudimentary version< i really enjoyed this project, learned new things  :muscle:  :smile:
