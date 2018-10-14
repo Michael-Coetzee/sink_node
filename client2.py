@@ -5,6 +5,7 @@ import socket
 import cPickle
 import mysql.connector
 from collections import OrderedDict
+from mysql.connector import errorcode
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -108,11 +109,25 @@ def main(args):
             prepare_session(hcrt, health_check)
             create_socket(data_string)
         elif sys.argv[1] == 'config':
-            client.execute('SELECT * FROM TERM002 ORDER BY id DESC LIMIT 1')
-            records = client.fetchall()
-            print 'Current ATM date:', records[0][1], 'Current ATM time:', records[0][2]
-            prepare_session(crt, config_request)
-            create_socket(data_string)
+            try:
+                client.execute('SELECT * FROM TERM002 ORDER BY id DESC LIMIT 1')
+            except mysql.connector.ProgrammingError:
+                client.execute('CREATE TABLE IF NOT EXISTS TERM002 (id INT AUTO_INCREMENT PRIMARY KEY, atmdate varchar(255), atmtime varchar(255))')
+            if client.fetchone() == None:
+                sql = "INSERT INTO TERM002 (atmdate, atmtime) VALUES ('1984-03-15', '00:00:00')"
+                client.execute(sql)
+                mydb.commit()
+                client.execute('SELECT * FROM TERM002 ORDER BY id DESC LIMIT 1')
+                records = client.fetchall()
+                print 'Current ATM date:', records[0][1], 'Current ATM time:', records[0][2]
+                prepare_session(crt, config_request)
+                create_socket(data_string)
+            else:
+                client.execute('SELECT * FROM TERM002 ORDER BY id DESC LIMIT 1')
+                records = client.fetchall()
+                print 'Current ATM date:', records[0][1], 'Current ATM time:', records[0][2]
+                prepare_session(crt, config_request)
+                create_socket(data_string)
         else:
             print 'Usage: python %s <config> | <health>' % sys.argv[0]
     else:
