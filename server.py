@@ -1,5 +1,6 @@
 import json
 import socket
+from thread import * 
 import cPickle
 import datetime
 import mysql.connector
@@ -47,7 +48,7 @@ ct = [
     ('Field_Separator_11', ':1C'),
     ('CA_Public_Key_Information', '---'),
     ('CA_Public_Key_List', '---'),
-    ('Protocol_Dependent_Trailer', 'OFT'),
+    ('Protocol_Dependent_Trailer', 'OFT')
 ]
 
 hcct = [
@@ -69,6 +70,40 @@ hcct = OrderedDict(hcct)
 config_response = ''.join(str(x) for x in ct.values())
 health_confirm = ''.join(str(x) for x in hcct.values())
 
+terminal_id = ['TERM001', 'TERM002']
+
+
+def on_new_client(conn):
+    while True:
+        data = conn.recv(2048)
+        try:
+            data_loaded = json.loads(data)
+        except ValueError:
+            pass
+        data_session_key = data_loaded.get('session_key', None)
+        key = cPickle.loads(str(data_session_key))
+        data_clean = data_loaded.get('request', None).split(':1C')
+        if not data:
+            break
+        if data_clean[1] in terminal_id:
+            print 'Got connection from', data_clean[1]
+            if data_clean[2] == 'H0':
+                print 'received health request'
+                print 'session id: %s' % key
+                data_string = json.dumps(health_confirm)
+                conn.send(data_string)
+                create_store_response('health_check', data_loaded)
+            elif data_clean[2] == '88':
+                print 'received config request'
+                print 'session id: %s' % key
+                data_string = json.dumps(config_response)
+                conn.send(data_string)
+                create_store_response('config_check', data_loaded)
+            else:
+                print 'nope'
+        else:
+            print 'do not recognise terminal'
+
 
 def create_store_response(table_name, adict):
     ignored_keys = []
@@ -85,41 +120,14 @@ def create_store_response(table_name, adict):
     mydb.commit()
 
 
-def create_socket():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(('0.0.0.0', 12345))
-
-    s.listen(5)
-    while True:
-        c, addr = s.accept()
-        print 'Got connection from', addr
-        data = c.recv(2048)
-        data_loaded = json.loads(data)
-        data_session_key = data_loaded.get('session_key', None)
-        key = cPickle.loads(str(data_session_key))
-        data_clean = data_loaded.get('request', None).split(':1C')
-        if data_clean[2] == 'H0':
-            print 'received health request'
-            print 'session id: %s' % key
-            data_string = json.dumps(health_confirm)
-            c.send(data_string)
-            create_store_response('health_check', data_loaded)
-            c.close()
-        elif data_clean[2] == '88':
-            print 'received config request'
-            print 'session id: %s' % key
-            data_string = json.dumps(config_response)
-            c.send(data_string)
-            create_store_response('config_check', data_loaded)
-            c.close()
-        else:
-            print 'nope'
-            c.close()
-
-    s.close()
-
-
-
 if __name__ == '__main__':
-    create_socket()
+    PORT = 5000
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(('0.0.0.0', PORT))
+    server_socket.listen(10)
+    while True:
+        conn, addr = server_socket.accept()
+        start_new_thread(on_new_client, (conn,))
+
+    server_socket.close()
