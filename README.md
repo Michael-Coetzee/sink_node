@@ -9,8 +9,9 @@ Each session has a key created and shared to the server, keys are also logged
 - [x] Update time and date on config request from the server response
 - [x] Add database on client side to log responses
 - [ ] Improve key management
-- [x] introduce threading for multiple clients(ATM's)
-- [x] code refactoring
+- [x] Introduce threading for multiple clients(ATM's)
+- [x] Continuous code refactoring
+- [ ] Store each session and keep the client alive, with interactive feedback from server
 
 ## Requirements
 
