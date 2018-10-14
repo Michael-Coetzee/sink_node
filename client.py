@@ -55,9 +55,16 @@ def create_socket(data_string):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.connect(('localhost', 12345))
     s.sendall(data_string)
-    data = s.recv(1024).split(':1C')
-    print 'reply recieved response from server %s' % data
+    data = s.recv(1024)
+    data_loaded = json.loads(data).split(':1C')
+    if data_loaded[2][:2] == 'H0':
+        print 'recieved health response: %s' % data
+    elif data_loaded[2] == '88':
+        print 'recieved config response: %s' % data
+    else:
+        print data_loaded
     s.close()
+
 
 def main(args):
     if len(args) == 1:

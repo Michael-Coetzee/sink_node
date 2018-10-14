@@ -15,7 +15,7 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 
-config_response = 'STXH0.BANK001:1CTERM001:1C------:1C...:1C---:1C---:1C---:1C---:1C---:1C------:1C------OFT'
+config_response = 'STXH0.BANK001:1CTERM001:1C88:1C------:1C...:1C---:1C---:1C---:1C---:1C---:1C------:1C------OFT'
 health_confirm = 'STXH0.BANK001:1CTERM001:1CH0OFT'
 
 config_response_dict = {
@@ -79,18 +79,22 @@ def create_socket():
         if data_clean[2] == 'H0':
             print 'received health request'
             print 'session id: %s' % key
-            c.send(health_confirm)
+            data_string = json.dumps(health_confirm)
+            c.send(data_string)
             create_store_response('health_check', data_loaded)
             c.close()
         elif data_clean[2] == '88':
             print 'received config request'
             print 'session id: %s' % key
-            c.send(config_response)
+            data_string = json.dumps(config_response)
+            c.send(data_string)
             create_store_response('config_check', data_loaded)
             c.close()
         else:
             print 'nope'
             c.close()
+
+    s.close()
 
 
 
