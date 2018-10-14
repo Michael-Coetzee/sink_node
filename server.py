@@ -71,12 +71,17 @@ health_confirm = ''.join(str(x) for x in hcct.values())
 
 
 def create_store_response(table_name, adict):
-    columns = ' varchar(255), '.join(adict.keys()) + ' varchar(255)'
+    ignored_keys = []
+    for key in adict.keys():
+        if key.startswith('Field_Separator'):
+            ignored_keys.append(key)
+    temp_dict = {k: v for k, v in adict.items() if k not in ignored_keys}
+    columns = ' varchar(255), '.join(temp_dict.keys()) + ' varchar(255)'
     mycursor.execute("CREATE TABLE IF NOT EXISTS %s (id INT AUTO_INCREMENT PRIMARY KEY, `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, %s )" % (table_name, columns))
-    plachold = ', '.join(['%s'] * len(adict))
-    columns = ', '.join(adict.keys())
+    plachold = ', '.join(['%s'] * len(temp_dict))
+    columns = ', '.join(temp_dict.keys())
     sql = "INSERT INTO %s (%s) VALUES (%s)" % (table_name, columns, plachold)
-    mycursor.execute(sql, adict.values())
+    mycursor.execute(sql, temp_dict.values())
     mydb.commit()
 
 
