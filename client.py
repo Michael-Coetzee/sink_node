@@ -41,7 +41,7 @@ health_check_request = {
 }
 
 
-def prepare_dict(dict_n, config):
+def prepare_session(dict_n, config):
     generate_session_key = cPickle.dumps(os.urandom(24).encode('hex'))
     dict_n['session_key'] = generate_session_key
     key = cPickle.loads(str(generate_session_key))
@@ -70,10 +70,10 @@ def create_socket(data_string):
 def main(args):
     if len(args) == 1:
         if sys.argv[1] == 'health':
-            prepare_dict(health_check_request, health_check)
+            prepare_session(health_check_request, health_check)
             create_socket(data_string)
         elif sys.argv[1] == 'config':
-            prepare_dict(config_request_dict, config_request)
+            prepare_session(config_request_dict, config_request)
             create_socket(data_string)
         else:
             print 'Usage: python %s <config> | <health>' % sys.argv[0]
