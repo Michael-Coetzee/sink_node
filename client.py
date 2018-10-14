@@ -44,7 +44,8 @@ health_check_request = {
 def prepare_dict(dict_n, config):
     generate_session_key = cPickle.dumps(os.urandom(24).encode('hex'))
     dict_n['session_key'] = generate_session_key
-    print 'session id: %s' % generate_session_key
+    key = cPickle.loads(str(generate_session_key))
+    print 'session key:', key
     dict_n['request'] = config
     global data_string
     data_string = json.dumps(dict_n)
