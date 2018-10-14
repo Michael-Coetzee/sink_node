@@ -81,4 +81,4 @@ recieved health response: "STXH0.BANK001:1CTERM001:1CH0OFT"
 ```
 
 ## Closing Off
-I hope this answers the test question, albeit a rudimentary version< i really enjoyed this project, learned new things  :muscle:  :smile:
+I hope this answers the test question, albeit a rudimentary version, i really am enjoying this project, learned quite a few new things, and see room for more improvements  :muscle:  :smile:
